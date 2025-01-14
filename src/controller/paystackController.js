@@ -13,10 +13,13 @@ class PaystackController {
             };
 
             const data = await Paystack.createPayment(paymentDetails);
-            return res.status(201).json({
-                message: "Payment created successfully",
-                data,
-            });
+            const authorizationUrl = data.data.authorization_url
+            res.json({authorizationUrl,})
+            // return res.status(201).json({
+            //     message: "Payment created successfully",
+            //     data,
+            // });
+            
         } catch (error) {
             return res.status(500).json({
                 message: "Failed to create payment",
