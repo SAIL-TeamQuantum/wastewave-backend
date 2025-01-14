@@ -42,12 +42,13 @@ const signInUser = async(req,res)=> {
         if (user) {
             const checkPassword = await bcrypt.compare(password, user.password)
             if (checkPassword) {
-                const token = await jwt.sign({_id: user._id}, "qwertyuiop", {expiresIn: "5d"})
+                const token = await jwt.sign({id: user._id, email: user.email}, process.env.JWT_SECRET, {expiresIn: "5d"})
+                
                 const { password, ...info} = user._doc;
 
                 res.status(201).json({
                     message: "User signed in",
-                    data: { token, ...info }
+                    data: {token}
                 })
             }
             else {
