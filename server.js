@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config()
 require("./src/config/db");
 const userRouter = require('./src/router/userRoute');
+const otpRouter = require('./src/router/otpRoute');
 const path = require('path');
 
 const app = express()
@@ -10,7 +11,8 @@ const PORT = 3878
 
 app.use(cors());
 app.use(express.json());
-app.use('/api', userRouter); 
+app.use('/api', userRouter);
+app.use("/api", otpRouter);
 
 app.get("/", (req, res)=> {
     const options = {

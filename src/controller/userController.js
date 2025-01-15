@@ -1,38 +1,54 @@
 const userModel = require('../model/User')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-
+const { sendOTPVerificationEmail, resendOTP, verifyOTP } = require('./otpController')
 const signUpUser = async(req,res)=> {
     try {
+        
         const {email, password} = req.body
-        const salt = await bcrypt.genSalt(9)
-        const hash = await bcrypt.hash(password, salt)
+        if (email == "" || password == "") {
+            res.json({
+                status: "FAILED",
+                message: "Empty input fields!"
+            })
+        } else {
+            const salt = await bcrypt.genSalt(9)
+            const hash = await bcrypt.hash(password, salt)
 
-        const user = await userModel.findOne({email})
-        if (user) {
-            res.status(400).json({
-                message: "User already exist"
-            }) 
+            const user = await userModel.findOne({email})
+            if (user) {
+                res.status(400).json({
+                    message: "User already exist"
+                }) 
+            }
+            else {
+            const new_user = await userModel.create({
+                email,
+                password: hash,
+                verified: false
+            })
+            sendOTPVerificationEmail(new_user, res)
+            res.status(201).json({
+                status: "PENDING",
+                message: "Verification otp email sent",
+                data: {
+                    userId: new_user._id,
+                    email,
+                }
+            })
         }
-        else {
-        const new_user = await userModel.create({
-            email,
-            password: hash
-        })
-        res.status(201).json({
-            message: 'user successfully created',
-            data: new_user
-        })
-    }
-    }
-    catch (error) {
+        }
+    } catch (error) {
         res.status(400).json({
             message: 'failed to create user',
             data: error.message
         })
     }
 }
-
+// res.status(201).json({
+//     message: 'user successfully created',
+//     data: new_user
+// })
 
 const signInUser = async(req,res)=> {
     try {
@@ -110,4 +126,7 @@ const updateUser = async(req, res) => {
         res.status(500).json({ errorMessage: error.message})
     }
 }
+
+
+
 module.exports = {signUpUser, signInUser, updateUser, getAllUser, getUserById }

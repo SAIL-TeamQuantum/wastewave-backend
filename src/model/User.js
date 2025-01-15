@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema(
         },
         name: { type: String }, // Optional field
         address: { type: String }, // Optional field
+        verified: Boolean,
     }, {timestamps: true}
 )
 
