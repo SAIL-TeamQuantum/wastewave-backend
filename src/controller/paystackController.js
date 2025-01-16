@@ -59,4 +59,3 @@ class PaystackController {
 
 const paystackController = new PaystackController();
 module.exports = paystackController;
-

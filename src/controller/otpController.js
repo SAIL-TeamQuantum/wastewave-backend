@@ -43,14 +43,7 @@ const sendOTPVerificationEmail = async ({_id, email}, res) => {
         });
         await newOTPVerification.save();
         await transporter.sendMail(mailOptions)
-        // res.json({
-        //     status: "PENDING",
-        //     message: "Verification otp email sent",
-        //     data: {
-        //         userId: _id,
-        //         email,
-        //     }
-        // })
+        
         return { status: "PENDING", message: "Verification OTP email sent" };
     } catch (error) {
         res.json({
@@ -67,6 +60,7 @@ const verifyOTP = async(req, res) => {
         if (!userId || !otp) {
             throw Error("Empty OTP details are not allowed")
         } else {
+            
             const userOTPVerificationRecords = await UserOTPVerification.find({
                 userId
             })
@@ -89,7 +83,7 @@ const verifyOTP = async(req, res) => {
                         UserOTPVerification.deleteMany({ userId})
                         res.json({
                             status: "VERIFIED",
-                            message: "User email verified successfully"
+                            message: "User email verified successfully",
                         })
                         
                     }
